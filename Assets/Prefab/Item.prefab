@@ -628,6 +628,7 @@ MonoBehaviour:
     time: 0
   commandName: "\uC0AC\uACFC"
   canMove: 1
+  active: 1
   parent: {fileID: 0}
   inventory: {fileID: 0}
   move: {fileID: 0}
@@ -907,6 +908,7 @@ MonoBehaviour:
     time: 0
   commandName: "\uBC84\uB9B0\uB2E4."
   canMove: 0
+  active: 1
   ga: {fileID: 6225719135569255535}
 --- !u!1 &9044162415362937512
 GameObject:
@@ -1065,4 +1067,5 @@ MonoBehaviour:
     time: 0
   commandName: "\uBA39\uB294\uB2E4."
   canMove: 0
+  active: 1
   ga: {fileID: 6225719135569255535}

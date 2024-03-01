@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,8 +15,8 @@ public abstract class Command : MonoBehaviour
     public List<Command> childList;
     public Status status;
     public string commandName;
-    public bool canMove = false;
-
+    [SerializeField] private bool canMove = false;
+    public bool active = true;
 
     protected virtual void Awake()
     {
@@ -35,11 +36,32 @@ public abstract class Command : MonoBehaviour
         if (Player.Instance.CurrentLocation == commandName)
         {
             gameObject.SetActive(false);
-         }
+        }
     }
 
     public virtual void ExecuteCustom(Player player)
     {
+        if (transform.parent != null)
+        {
+            ListMenu parentMenu = transform.parent.GetComponent<ListMenu>();
+            if (parentMenu != null)
+            {
+                int nCount = parentMenu.transform.childCount;
+                for (int i = 0; i < nCount; i++)
+                {
+                    GameObject d = parentMenu.transform.GetChild(i).gameObject;
+                    if (this.gameObject != d)
+                    {
+                        ListMenu child = d.GetComponentInChildren<ListMenu>();
+                        if (child)
+                        {
+                            child.gameObject.SetActive(false);
+                        }
+                    }
+                }
+            }
+        }
+
         if (listMenu.transform.childCount > 0)
         {
             listMenu.gameObject.SetActive(!listMenu.gameObject.activeSelf);
@@ -50,36 +72,6 @@ public abstract class Command : MonoBehaviour
     
     protected abstract void Execute(Player player);
 
-    public void Move(Vector3 vector)
-    {
-        if (canMove)
-        {
-            trans.Translate(vector);
-            //// Get the anchor and offset values of the parentTransform
-            //Vector2 anchorMin = parentTransform.anchorMin;
-            //Vector2 anchorMax = parentTransform.anchorMax;
-            //Vector2 offsetMin = parentTransform.offsetMin;
-            //Vector2 offsetMax = parentTransform.offsetMax;
-
-            //// Calculate the bounds based on anchor and offset
-            //float minX = anchorMin.x * parentTransform.sizeDelta.x + offsetMin.x;
-            //float minY = anchorMin.y * parentTransform.sizeDelta.y + offsetMin.y;
-            //float maxX = anchorMax.x * parentTransform.sizeDelta.x + offsetMax.x;
-            //float maxY = anchorMax.y * parentTransform.sizeDelta.y + offsetMax.y;
-
-            //Vector3 newPosition = trans.position + vector;
-
-            //// Clamp the new position within the bounds
-            //float clampedX = Mathf.Clamp(newPosition.x, parentTransform.offsetMin.x, parentTransform.offsetMax.x);
-            //float clampedY = Mathf.Clamp(newPosition.y, minY, maxY);
-
-            //Debug.Log("X : " + clampedX + "Y" + clampedY);
-
-            //// Update the position only if it is within bounds
-            //trans.position = new Vector3(clampedX, clampedY, 0f);
-        }
-    }
-
     public virtual void RemoveChild(Command child)
     {
         if (childList.Contains(child))
@@ -87,5 +79,16 @@ public abstract class Command : MonoBehaviour
             childList.Remove(child);
             Destroy(child.gameObject);
         }
+    }
+
+    public void Move(Vector3 vector)
+    {
+        if (canMove)
+            trans.Translate(vector);
+    }
+
+    public void Active(bool on)
+    {
+        active = on;
     }
 }

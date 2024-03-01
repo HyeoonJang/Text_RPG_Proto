@@ -12,6 +12,10 @@ public class Behavior : Command
 
     protected override void Execute(Player player)
     {
+        if (commandName == "이동하가")
+        {
+            move.gameObject.SetActive(true);
+        }
         if (commandName == "마을")
         {
             parent.gameObject.SetActive(false);

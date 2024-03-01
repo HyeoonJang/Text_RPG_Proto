@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [System.Serializable]
 class Event
 {
     public Command command = null;
-    public string location;
+    public Transform ToPosition = null;
+    public string location = null;
     public float percent = 0;
 }
 
@@ -49,30 +51,15 @@ public class GameManager : MonoBehaviour
 
     public void EventStart(string location)
     {
-        // 확률 합계 계산
-        float totalPercent = 0f;
-
-        // 해당 지역에 해당하는 이벤트들의 확률 합계 계산
-        foreach (Event randomEvent in randomtList)
-        {
-            if (randomEvent.location == location)
-            {
-                totalPercent += randomEvent.percent;
-            }
-        }
-
-        // 랜덤으로 선택된 확률
-        float randomValue = Random.Range(0f, totalPercent);
-
-        float accumulatedPercent = 0f;
-
+        bool nNotEvent = true;
         for (int i = 0; i < randomtList.Count; i++)
         {
             if (randomtList[i].location == location)
             {
-                accumulatedPercent += randomtList[i].percent;
+                nNotEvent = false;
+                float randomValue = Random.Range(0f, 100);
 
-                if (accumulatedPercent >= randomValue)
+                if (randomValue < randomtList[i].percent)
                 {
                     float minX = commandCanvas.rect.xMin * commandCanvas.localScale.x;
                     float maxX = commandCanvas.rect.xMax * commandCanvas.localScale.x;
@@ -91,12 +78,15 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        if (randomtList[i].command == null)
+                        if (randomtList[i].ToPosition)
                         {
-                            Player.Instance.ShowIntroduce("아무것도 발견하지 못했다.");
+                            randomtList[i].command.active = true;
+                            Player.Instance.ShowIntroduce(randomtList[i].command.commandName + "지역을 발견했다.");
+                            randomtList.RemoveAt(i);
                         }
                         else
                         {
+
                             Command b = Instantiate(randomtList[i].command, randomPosition, Quaternion.identity, commandCanvas);
                             list.Add(b);
                             Player.Instance.ShowIntroduce(randomtList[i].command.commandName + "(를) 발견했다.");
@@ -104,9 +94,19 @@ public class GameManager : MonoBehaviour
                         return;
                     }
                 }
+                else
+                {
+                    Player.Instance.ShowIntroduce("아무것도 발견하지 못했다.");       
+                }
             }
         }
+        if (nNotEvent)
+        {
+            Player.Instance.ShowIntroduce("이벤트 리스트 없음");
+        }
     }
+    
+
 
     bool IsOverlapping(Vector3 localPosition)
     {
@@ -138,13 +138,15 @@ public class GameManager : MonoBehaviour
 
     public void RemoveList()
     {
+
+
         if (list != null)
         {
-            for (int i = 0; i < list.Count; i++)
+            for (int i = list.Count - 1; i >= 0; i--)
             {
                 Destroy(list[i].gameObject);
+                list.RemoveAt(i);
             }
-            list.Clear();
         }
     }
 }

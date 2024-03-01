@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,12 +8,13 @@ using UnityEngine.UI;
 public class ListMenu : MonoBehaviour
 {
     private RectTransform rectTransform;
-
+    Command[] list; 
     [SerializeField] private float width;
     [SerializeField] private float height;
 
     private void Awake()
     {
+        list = GetComponentsInChildren<Command>();
         rectTransform = GetComponent<RectTransform>();
     }
 
@@ -23,32 +25,11 @@ public class ListMenu : MonoBehaviour
 
     private void OnEnable()
     {
-        Transform[] children = new Transform[transform.childCount];
-        for (int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < list.Length; i++)
         {
-            children[i] = transform.GetChild(i);
+            list[i].gameObject.SetActive(list[i].active);
         }
 
-        // 모든 자식 오브젝트를 삭제합니다.
-        foreach (Transform child in children)
-        {
-            child.gameObject.SetActive(true);
-        }
-        Player.Instance.CurrentLocation = Player.Instance.CurrentLocation;
-    }
-    private void OnDisable()
-    {
-                Transform[] children = new Transform[transform.childCount];
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            children[i] = transform.GetChild(i);
-        }
-
-        // 모든 자식 오브젝트를 삭제합니다.
-        foreach (Transform child in children)
-        {
-            child.gameObject.SetActive(false);
-        }
     }
 
     public void ShowList(int nCount = 0)

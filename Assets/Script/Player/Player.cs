@@ -123,26 +123,26 @@ public class Player : MonoBehaviour
             currnetLocation = value;
             locationText.text = "(" + currnetLocation + ")";
             if (currnetLocation == "식당")
-                eat.gameObject.SetActive(true);
+                eat.active = true;
             else
-                eat.gameObject.SetActive(false);
+                eat.active = false;
 
             if (currnetLocation == "방")
-                sleep.gameObject.SetActive(true);
+                sleep.active = true;
             else
-                sleep.gameObject.SetActive(false);
+                sleep.active = false;
 
             if (currnetLocation == "잡화점" || currnetLocation == "무기 상점" || currnetLocation == "방어구 상점")
-                npc.gameObject.SetActive(true);
+                npc.active = true;
             else
-                npc.gameObject.SetActive(false);
+                npc.active = false;
         }
 
     }
 
-    public GameObject eat;
-    public GameObject sleep;
-    public GameObject npc;
+    public Command eat;
+    public Command sleep;
+    public Command npc;
 
     // Awake 메서드를 사용하여 초기화
     private void Awake()
@@ -160,7 +160,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        CurrentLocation = "마을"; ;
+        CurrentLocation = "방";
 
         ShowStatus();
     }

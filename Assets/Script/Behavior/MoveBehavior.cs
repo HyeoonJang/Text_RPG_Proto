@@ -15,7 +15,6 @@ public class MoveBehavior : Command
 
     public void DD()
     {
-        canMove = false;
         text.text = commandName;
     }
 

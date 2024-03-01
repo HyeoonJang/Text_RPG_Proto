@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
-using UnityEngine.UI;
-using Random = UnityEngine.Random;
+using Debug = UnityEngine.Debug;
 
 public class CommandUI : MonoBehaviour
 {
@@ -51,12 +51,16 @@ public class CommandUI : MonoBehaviour
                 mouseTwo = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 //Debug.Log("Mouse Position: " + mouseOne);
                 //Debug.Log("Mouse Position: " + mouseTwo);
-                if (mouseTwo != mouseOne && selectCommand.canMove)
+                if (mouseTwo != mouseOne)
                 {
+                    Vector2 tmp = mouseTwo - mouseOne;
+
+                    Vector2 newPosition = selectCommand.transform.position + new Vector3(tmp.x, tmp.y, 0);
+  
                     moved = true;
-                    Vector2 pos = mouseTwo - mouseOne;
-                    selectCommand.Move(new Vector3(pos.x, pos.y, 0));
+                    selectCommand.Move(new Vector3(tmp.x, tmp.y, 0));
                     mouseOne = mouseTwo;
+                    
                 }
             }
 
